@@ -1,0 +1,46 @@
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-areas: 
+        "top-left top-center top-right"
+        "mid-left mid-center mid-right"
+        "bottom-left bottom-center bottom-right"
+    ;
+    width: 600px;
+    height: 600px;
+    margin: 0 auto;
+}
+
+.gameboardPosition {
+    border-color: black;
+}
+
+.top {
+    border-bottom-style: solid;
+    border-bottom-width: 5px;
+}
+.left {
+    border-right-style: solid;
+    border-right-width: 5px;
+}
+.center {
+    border-right-style: solid;
+    border-right-width: 5px;
+    border-left-style: solid;
+    border-left-width: 5px;
+}
+.right {
+    border-left-style: solid;
+    border-left-width: 5px;
+}
+.mid {
+    border-top-style: solid;
+    border-top-width: 5px;
+    border-bottom-style: solid;
+    border-bottom-width: 5px;
+}
+.bottom {
+    border-top-style: solid;
+    border-top-width: 5px;
+}
