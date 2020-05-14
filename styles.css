@@ -1,4 +1,9 @@
-.container {
+#current-player {
+    display: table;
+    margin: 0 auto;
+}
+
+.gameboard {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
@@ -10,6 +15,7 @@
     width: 600px;
     height: 600px;
     margin: 0 auto;
+    border-style: solid;
 }
 
 .gameboardPosition {
@@ -43,4 +49,15 @@
 .bottom {
     border-top-style: solid;
     border-top-width: 5px;
+}
+
+.game-settings {
+    display: table;
+    margin: 0 auto;
+}
+#setting {
+    margin-right: 230px;
+}
+#reset {
+    margin-left: 230px;
 }
