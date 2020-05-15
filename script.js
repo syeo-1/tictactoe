@@ -3,6 +3,7 @@ let Gameboard = (function() {
     let _allPositions = document.querySelectorAll(".gameboardPosition");
     let gameOver = false;
     let positionsFilled = 0;
+    let turnDisplay = document.getElementById("current-player");
     // function that rerenders the board with playerMove
     // also adds/removes event listeners upon a move
 
@@ -13,6 +14,9 @@ let Gameboard = (function() {
         // console.log(Game.getCurrentPlayer());
 
         let currentMark = Game.getCurrentPlayer().playerMark;
+        let currentName = Game.getNextPlayer().playerName;
+
+        turnDisplay.textContent = `${currentName}'s turn`
 
         if (chosenPosition === "top left") _gameboard[0][0] = currentMark;
         else if (chosenPosition === "top center") _gameboard[0][1] = currentMark;
@@ -141,6 +145,8 @@ let Gameboard = (function() {
         for (const position of _allPositions) {
             position.addEventListener("click", _selectablePosition);
         }
+        // turn display
+        turnDisplay.textContent = `${Game.getCurrentPlayer().playerName}'s turn`;
     }
 
     return {
@@ -189,7 +195,7 @@ let Game = (function() {
         player1 = Player("player X", "X");
         player2 = Player("player O", "O");
         currentPlayer = player1;
-        console.log(currentPlayer);
+        // console.log(currentPlayer);
 
         Gameboard.reset();
         DisplayController.renderBoard();
@@ -198,6 +204,9 @@ let Game = (function() {
 
     function getCurrentPlayer() {
         return currentPlayer;
+    }
+    function getNextPlayer() {
+        return (currentPlayer === player1) ? player2 : player1;
     }
     function getPlayer1() {
         return player1;
@@ -227,6 +236,7 @@ let Game = (function() {
         player1,
         player2,
         getCurrentPlayer,
+        getNextPlayer,
         getPlayer1,
         getPlayer2,
     };
