@@ -1,8 +1,8 @@
 let Gameboard = (function() {
     let _gameboard;
     let _allPositions = document.querySelectorAll(".gameboardPosition");
-    let gameOver = false;
-    let positionsFilled = 0;
+    let gameOver;
+    let positionsFilled;
     let turnDisplay = document.getElementById("current-player");
     // function that rerenders the board with playerMove
     // also adds/removes event listeners upon a move
@@ -10,7 +10,7 @@ let Gameboard = (function() {
     function _selectablePosition(e) {
         // modify gameboard array (add an x or o)
         let chosenPosition = [...e.target.classList].slice(1).join(" ");
-        console.log([...e.target.classList].slice(1).join(" "));
+        // console.log([...e.target.classList].slice(1).join(" "));
         // console.log(Game.getCurrentPlayer());
 
         let currentMark = Game.getCurrentPlayer().playerMark;
@@ -141,6 +141,7 @@ let Gameboard = (function() {
             [null, null, null]
         ];
         positionsFilled = 0;
+        gameOver = false;
         // add event listeners to all grid elements
         for (const position of _allPositions) {
             position.addEventListener("click", _selectablePosition);
@@ -190,16 +191,23 @@ let Game = (function() {
     let player1;
     let player2;
     let currentPlayer;
+    let player1Name = "player X";
+    let player2Name = "player O";
 
     function start() {
-        player1 = Player("player X", "X");
-        player2 = Player("player O", "O");
+        player1 = Player(player1Name, "X");
+        player2 = Player(player2Name, "O");
         currentPlayer = player1;
         // console.log(currentPlayer);
 
         Gameboard.reset();
         DisplayController.renderBoard();
 
+        // add event listeners to reset
+        let gameReset = document.getElementById("reset");
+        gameReset.addEventListener("click", reset);
+
+        // add event listener to settings
     }
 
     function getCurrentPlayer() {
@@ -216,7 +224,9 @@ let Game = (function() {
     }
 
     function reset() {
-        playMade = 0;
+        player1 = Player(player1Name, "X");
+        player2 = Player(player2Name, "O");
+        currentPlayer = player1;
         Gameboard.reset()
         DisplayController.renderBoard();
     }
