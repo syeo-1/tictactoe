@@ -61,3 +61,8 @@
 #reset {
     margin-left: 230px;
 }
+
+#game-over {
+    margin: 0 auto;
+    width: 50%;
+}
