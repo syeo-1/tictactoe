@@ -14,7 +14,7 @@ let Gameboard = (function() {
         // console.log(Game.getCurrentPlayer());
 
         let currentMark = Game.getCurrentPlayer().playerMark;
-        let currentName = Game.getNextPlayer().playerName;
+        let currentName = Game.getNextPlayer().getName();
 
         turnDisplay.textContent = `${currentName}'s turn`
 
@@ -147,7 +147,7 @@ let Gameboard = (function() {
             position.addEventListener("click", _selectablePosition);
         }
         // turn display
-        turnDisplay.textContent = `${Game.getCurrentPlayer().playerName}'s turn`;
+        turnDisplay.textContent = `${Game.getCurrentPlayer().getName()}'s turn`;
     }
 
     return {
@@ -179,24 +179,25 @@ let Player = (name, mark) => {
     let playerName = name;
     let playerMark = mark;
 
+    let getName = () => name;
+
     return {
         playerName,
         playerMark,
+        getName,
     }
 
 };
 
 
 let Game = (function() {
-    let player1;
-    let player2;
+    let player1 = Player("player X", "X");
+    let player2 = Player("player O", "O");
+    let player1Name;
+    let player2Name;
     let currentPlayer;
-    let player1Name = "player X";
-    let player2Name = "player O";
 
     function start() {
-        player1 = Player(player1Name, "X");
-        player2 = Player(player2Name, "O");
         currentPlayer = player1;
         // console.log(currentPlayer);
 
@@ -208,12 +209,24 @@ let Game = (function() {
         gameReset.addEventListener("click", reset);
 
         // add event listener to settings
+        let settings = document.getElementById("settings");
+        settings.addEventListener("click", showSettingsForm);
+
+        //add event listener to cancel in settings
+        let settingsCancel = document.getElementById("settings-cancel");
+        settingsCancel.addEventListener("click", hideSettingsForm);
+
+        // add event listener to set in settings
+        let settingsSet = document.getElementById("settings-set");
+        settingsSet.addEventListener("click", saveSettings);
     }
 
     function getCurrentPlayer() {
         return currentPlayer;
     }
     function getNextPlayer() {
+        // console.log(player1.playerName);
+        // console.log(player2.playerName);
         return (currentPlayer === player1) ? player2 : player1;
     }
     function getPlayer1() {
@@ -223,9 +236,38 @@ let Game = (function() {
         return player2;
     }
 
+    function showSettingsForm() {
+        let settingsForm = document.getElementById("settings-form");
+        settingsForm.classList.remove("hidden");
+    }
+    function hideSettingsForm() {
+        let settingsForm = document.getElementById("settings-form");
+        settingsForm.classList.add("hidden");
+    }
+    function saveSettings() {
+        let newp1Name = document.getElementById("player-x-name").value;
+        let newp2Name = document.getElementById("player-o-name").value;
+        if (newp1Name !== "") {
+            player1Name = newp1Name;
+            player1.playerName = player1Name;
+        }
+        if (newp2Name !== "") {
+            player2Name = newp2Name;
+            player2.playerName = player2Name;
+        }
+        // console.log(player1);
+        // console.log(player2);
+        console.log(newp1Name);
+        console.log(newp2Name);
+        player1 = Player(newp1Name===""?"player X":player1Name, "X");
+        player2 = Player(newp2Name===""?"player O":player2Name, "O");
+        reset();
+
+        let settingsForm = document.getElementById("settings-form");
+        settingsForm.classList.add("hidden");
+    }
+
     function reset() {
-        player1 = Player(player1Name, "X");
-        player2 = Player(player2Name, "O");
         currentPlayer = player1;
         Gameboard.reset()
         DisplayController.renderBoard();
