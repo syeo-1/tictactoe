@@ -36,7 +36,7 @@ let Gameboard = (function() {
         positionsFilled++;
         let gameOverString = checkForWin();
         if (gameOver) {
-            console.log(gameOverString);
+            turnDisplay.textContent = gameOverString;
             // remove the remaining board event listeners
             for (const position of _allPositions) {
                 position.removeEventListener("click", _selectablePosition);
