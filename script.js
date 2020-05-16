@@ -219,6 +219,15 @@ let Game = (function() {
         // add event listener to set in settings
         let settingsSet = document.getElementById("settings-set");
         settingsSet.addEventListener("click", saveSettings);
+
+        // add event listener for vs AI settings
+        let aiSettings = document.getElementById("ai");
+        aiSettings.addEventListener("click", showAISettings);
+
+        // add event listener to hide AI settings
+        let setAI = document.getElementById("ai-set");
+        setAI.addEventListener("click", hideAISettings);
+
     }
 
     function getCurrentPlayer() {
@@ -265,6 +274,16 @@ let Game = (function() {
 
         let settingsForm = document.getElementById("settings-form");
         settingsForm.classList.add("hidden");
+    }
+
+    function showAISettings() {
+        let aiSettingsForm = document.getElementById("ai-form");
+        aiSettingsForm.classList.remove("hidden");
+    }
+    function hideAISettings() {
+        let aiSettingsForm = document.getElementById("ai-form");
+        aiSettingsForm.classList.add("hidden");
+        hideSettingsForm();
     }
 
     function reset() {
