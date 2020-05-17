@@ -1,7 +1,6 @@
 let Gameboard = (function() {
     let _gameboard;
     let _allPositions = document.querySelectorAll(".gameboardPosition");
-    let gameOver;
     let positionsFilled;
     let turnDisplay = document.getElementById("current-player");
     let xWins = false;
@@ -40,8 +39,7 @@ let Gameboard = (function() {
         // remove the appropriate event listener
         e.target.removeEventListener("click", selectablePosition);
         positionsFilled++;
-        checkForWin();
-        if (gameOver) {
+        if (gameIsOver()) {
             turnDisplay.textContent = getWinnerString();
             // remove the remaining board event listeners
             for (const position of _allPositions) {
@@ -57,8 +55,7 @@ let Gameboard = (function() {
             Game.toggleCurrentPlayer();
             DisplayController.renderBoard();
             positionsFilled++;
-            checkForWin();
-            if (gameOver) {
+            if (gameIsOver()) {
                 turnDisplay.textContent = getWinnerString();
                 // remove the remaining board event listeners
                 for (const position of _allPositions) {
@@ -72,9 +69,10 @@ let Gameboard = (function() {
 
     let incrementPosnFilled = () => positionsFilled++;
 
-    function checkForWin() {
+    function gameIsOver() {
         let xInARow = 0;
         let oInARow = 0;
+        let gameOver = false;
         
 
         // check rows
@@ -148,6 +146,7 @@ let Gameboard = (function() {
             }
         }
         if (positionsFilled === 9) gameOver = true;
+        return gameOver;
     }
     function getWinnerString() {
         if (xWins) return `winner is ${Game.getPlayer1().playerName}`;
@@ -384,9 +383,10 @@ let Game = (function() {
         reset();
     }
 
-    function minimax() {
+    // function minimax(board, depth, maximizingPlayer) {
+    //     if (depth === 0 || )
 
-    }
+    // }
 
     function uncheckAIoptions() {
         let xAI = document.getElementById("xAI");
