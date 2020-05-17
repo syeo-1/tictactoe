@@ -4,6 +4,8 @@ let Gameboard = (function() {
     let gameOver;
     let positionsFilled;
     let turnDisplay = document.getElementById("current-player");
+    let xWins = false;
+    let oWins = false;
     // function that rerenders the board with playerMove
     // also adds/removes event listeners upon a move
 
@@ -38,9 +40,9 @@ let Gameboard = (function() {
         // remove the appropriate event listener
         e.target.removeEventListener("click", selectablePosition);
         positionsFilled++;
-        let gameOverString = checkForWin();
+        checkForWin();
         if (gameOver) {
-            turnDisplay.textContent = gameOverString;
+            turnDisplay.textContent = getWinnerString();
             // remove the remaining board event listeners
             for (const position of _allPositions) {
                 position.removeEventListener("click", selectablePosition);
@@ -55,9 +57,9 @@ let Gameboard = (function() {
             Game.toggleCurrentPlayer();
             DisplayController.renderBoard();
             positionsFilled++;
-            let aiGameOverString = checkForWin();
+            checkForWin();
             if (gameOver) {
-                turnDisplay.textContent = aiGameOverString;
+                turnDisplay.textContent = getWinnerString();
                 // remove the remaining board event listeners
                 for (const position of _allPositions) {
                     position.removeEventListener("click", selectablePosition);
@@ -73,8 +75,7 @@ let Gameboard = (function() {
     function checkForWin() {
         let xInARow = 0;
         let oInARow = 0;
-        let xWins = false;
-        let oWins = false
+        
 
         // check rows
         for (let i = 0 ; i < _gameboard.length ; i++) {
@@ -146,13 +147,12 @@ let Gameboard = (function() {
                     }
             }
         }
+        if (positionsFilled === 9) gameOver = true;
+    }
+    function getWinnerString() {
         if (xWins) return `winner is ${Game.getPlayer1().playerName}`;
         else if (oWins) return `winner is ${Game.getPlayer2().playerName}`;
-        else if (positionsFilled === 9) {
-            gameOver = true;
-            return "it's a tie!";
-        }
-        else return;
+        else if (positionsFilled === 9) return "it's a tie!";
     }
 
     let getCurrentBoard = () => _gameboard;
@@ -382,6 +382,10 @@ let Game = (function() {
         aiSettingsForm.classList.add("hidden");
         hideSettingsForm();
         reset();
+    }
+
+    function minimax() {
+
     }
 
     function uncheckAIoptions() {
