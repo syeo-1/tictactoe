@@ -3,8 +3,8 @@ let Gameboard = (function() {
     let _allPositions = document.querySelectorAll(".gameboardPosition");
     let positionsFilled;
     let turnDisplay = document.getElementById("current-player");
-    let xWins = false;
-    let oWins = false;
+    let xWins;
+    let oWins;
     // function that rerenders the board with playerMove
     // also adds/removes event listeners upon a move
 
@@ -158,6 +158,8 @@ let Gameboard = (function() {
 
     function reset() {
         // reset gameboard values to null
+        xWins = false;
+        oWings = false;
         _gameboard = [
             [null, null, null],
             [null, null, null],
