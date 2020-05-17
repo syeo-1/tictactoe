@@ -7,16 +7,19 @@ let Gameboard = (function() {
     // function that rerenders the board with playerMove
     // also adds/removes event listeners upon a move
 
-    function _selectablePosition(e) {
+    function displayCurrentPlayerName() {
+        let currentName = Game.getCurrentPlayer().getName();
+        turnDisplay.textContent = `${currentName}'s turn`;
+    }
+
+    function selectablePosition(e) {
         // modify gameboard array (add an x or o)
         let chosenPosition = [...e.target.classList].slice(1).join(" ");
         // console.log([...e.target.classList].slice(1).join(" "));
         // console.log(Game.getCurrentPlayer());
 
         let currentMark = Game.getCurrentPlayer().playerMark;
-        let currentName = Game.getNextPlayer().getName();
-
-        turnDisplay.textContent = `${currentName}'s turn`
+        
 
         if (chosenPosition === "top left") _gameboard[0][0] = currentMark;
         else if (chosenPosition === "top center") _gameboard[0][1] = currentMark;
@@ -30,21 +33,42 @@ let Gameboard = (function() {
 
         Game.toggleCurrentPlayer();
         // console.log(Game.currentPlayerIsX);
+        displayCurrentPlayerName();
         DisplayController.renderBoard()
         // remove the appropriate event listener
-        e.target.removeEventListener("click", _selectablePosition);
+        e.target.removeEventListener("click", selectablePosition);
         positionsFilled++;
         let gameOverString = checkForWin();
         if (gameOver) {
             turnDisplay.textContent = gameOverString;
             // remove the remaining board event listeners
             for (const position of _allPositions) {
-                position.removeEventListener("click", _selectablePosition);
+                position.removeEventListener("click", selectablePosition);
             }
 
         }
-        
+        if ((Game.getxAIActive() || Game.getoAIActive()) && !gameOver) {
+            // let currentMark = Game.getCurrentPlayer().playerMark;
+            let currentName = Game.getNextPlayer().getName();
+            turnDisplay.textContent = `${currentName}'s turn`
+            Game.getAImove();
+            Game.toggleCurrentPlayer();
+            DisplayController.renderBoard();
+            positionsFilled++;
+            let aiGameOverString = checkForWin();
+            if (gameOver) {
+                turnDisplay.textContent = aiGameOverString;
+                // remove the remaining board event listeners
+                for (const position of _allPositions) {
+                    position.removeEventListener("click", selectablePosition);
+                }
+            }
+        }
     }
+
+    let getPositionsFilled = () => positionsFilled;
+
+    let incrementPosnFilled = () => positionsFilled++;
 
     function checkForWin() {
         let xInARow = 0;
@@ -144,15 +168,23 @@ let Gameboard = (function() {
         gameOver = false;
         // add event listeners to all grid elements
         for (const position of _allPositions) {
-            position.addEventListener("click", _selectablePosition);
+            position.addEventListener("click", selectablePosition);
         }
         // turn display
-        turnDisplay.textContent = `${Game.getCurrentPlayer().getName()}'s turn`;
+        if (Game.getxAIActive()) {
+            turnDisplay.textContent = `${Game.getNextPlayer().getName()}'s turn`;
+        } else {
+            turnDisplay.textContent = `${Game.getCurrentPlayer().getName()}'s turn`;
+        }
     }
 
     return {
         reset,
         getCurrentBoard,
+        positionsFilled,
+        selectablePosition,
+        getPositionsFilled,
+        incrementPosnFilled,
     };
     
 })();
@@ -175,9 +207,10 @@ let DisplayController = (function() {
     };
 })();
 
-let Player = (name, mark) => {
+let Player = (name, mark, isHuman) => {
     let playerName = name;
     let playerMark = mark;
+    let playerIsHuman = isHuman;
 
     let getName = () => name;
 
@@ -191,15 +224,19 @@ let Player = (name, mark) => {
 
 
 let Game = (function() {
-    let player1 = Player("player X", "X");
-    let player2 = Player("player O", "O");
+    let player1 = Player("player X", "X", true);
+    let player2 = Player("player O", "O", true);
     let player1Name;
     let player2Name;
     let currentPlayer;
+    let xAIActive = false;
+    let oAIActive = false;
 
     function start() {
         currentPlayer = player1;
         // console.log(currentPlayer);
+        // xAIActive = false;
+        // oAIActive = false;
 
         Gameboard.reset();
         DisplayController.renderBoard();
@@ -226,7 +263,11 @@ let Game = (function() {
 
         // add event listener to hide AI settings
         let setAI = document.getElementById("ai-set");
-        setAI.addEventListener("click", hideAISettings);
+        setAI.addEventListener("click", saveAISettings);
+
+        // add event listener to uncheck ai radio buttons
+        let uncheckAI = document.getElementById("uncheck");
+        uncheckAI.addEventListener("click", uncheckAIoptions);
 
     }
 
@@ -252,6 +293,9 @@ let Game = (function() {
     function hideSettingsForm() {
         let settingsForm = document.getElementById("settings-form");
         settingsForm.classList.add("hidden");
+        if (!document.getElementById("ai-form").classList.contains("hidden")) {
+            document.getElementById("ai-form").classList.add("hidden");
+        }
     }
     function saveSettings() {
         let newp1Name = document.getElementById("player-x-name").value;
@@ -264,8 +308,7 @@ let Game = (function() {
             player2Name = newp2Name;
             player2.playerName = player2Name;
         }
-        // console.log(player1);
-        // console.log(player2);
+
         console.log(newp1Name);
         console.log(newp2Name);
         player1 = Player(newp1Name===""?"player X":player1Name, "X");
@@ -274,21 +317,95 @@ let Game = (function() {
 
         let settingsForm = document.getElementById("settings-form");
         settingsForm.classList.add("hidden");
+        if (!document.getElementById("ai-form").classList.contains("hidden")) {
+            document.getElementById("ai-form").classList.add("hidden");
+        }
     }
 
     function showAISettings() {
         let aiSettingsForm = document.getElementById("ai-form");
         aiSettingsForm.classList.remove("hidden");
     }
-    function hideAISettings() {
+
+    function getAImove() {
+        let allPositions = document.querySelectorAll(".gameboardPosition");
+        let chosenPosition;
+        let board = Gameboard.getCurrentBoard();
+        let moveMade = false;
+        for (let i = 0 ; i < board.length ; i++) {
+            for (let j = 0 ; j < board[i].length ; j++) {
+                if (board[i][j] === null) {
+                    if (Gameboard.getPositionsFilled()%2 === 0) {
+                        board[i][j] = "X";
+                    } else {
+                        board[i][j] = "O";
+                    }
+                    if (i === 0 && j === 0) chosenPosition = "top left";
+                    else if (i === 0 && j === 1) chosenPosition = "top center";
+                    else if (i === 0 && j === 2) chosenPosition = "top right";
+                    else if (i === 1 && j === 0) chosenPosition = "mid left";
+                    else if (i === 1 && j === 1) chosenPosition = "mid center";
+                    else if (i === 1 && j === 2) chosenPosition = "mid right";
+                    else if (i === 2 && j === 0) chosenPosition = "bottom left";
+                    else if (i === 2 && j === 1) chosenPosition = "bottom center";
+                    else if (i === 2 && j === 2) chosenPosition = "bottom right";
+                    moveMade = true;
+                    break;
+                }
+            }
+            if (moveMade) break;
+        }
+        for (const position of allPositions) {
+            if (position.classList.contains(chosenPosition)) {
+                position.removeEventListener("click", Gameboard.selectablePosition);
+            }
+        }
+    }
+
+    let getxAIActive = () => xAIActive;
+    let getoAIActive = () => oAIActive;
+
+    function saveAISettings() {
+        if (document.getElementById("xAI").checked) {
+            xAIActive = true;
+            oAIActive = false;
+            // maybe later add ai name!
+        } else if (document.getElementById("oAI").checked) {
+            oAIActive = true;
+            xAIActive = false;
+        } else if (!document.getElementById("xAI").checked &&
+        !document.getElementById("oAI").checked) {
+            xAIActive = false;
+            oAIActive = false;
+        }
         let aiSettingsForm = document.getElementById("ai-form");
         aiSettingsForm.classList.add("hidden");
         hideSettingsForm();
+        reset();
+    }
+
+    function uncheckAIoptions() {
+        let xAI = document.getElementById("xAI");
+        let oAI = document.getElementById("oAI");
+        if (xAI.checked) {
+            xAI.checked = false;
+            xAIActive = false;
+        } else if (oAI.checked) {
+            oAI.checked = false;
+            oAIActive = false;
+        }
     }
 
     function reset() {
+        // console.log(xAIActive);
+        
         currentPlayer = player1;
         Gameboard.reset()
+        if (xAIActive) {
+            getAImove();
+            toggleCurrentPlayer();
+            Gameboard.incrementPosnFilled();
+        }
         DisplayController.renderBoard();
     }
 
@@ -310,6 +427,9 @@ let Game = (function() {
         getNextPlayer,
         getPlayer1,
         getPlayer2,
+        getAImove,
+        getxAIActive,
+        getoAIActive,
     };
     
 })();
