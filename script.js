@@ -466,6 +466,9 @@ let Game = (function() {
             oAI.checked = false;
             oAIActive = false;
         }
+        saveSettings();
+        hideSettingsForm();
+        reset();
     }
 
     function reset() {
