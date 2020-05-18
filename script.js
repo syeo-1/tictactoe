@@ -5,6 +5,7 @@ let Gameboard = (function() {
     let turnDisplay = document.getElementById("current-player");
     let xWins;
     let oWins;
+    // let gameOver = false;
     // function that rerenders the board with playerMove
     // also adds/removes event listeners upon a move
 
@@ -47,7 +48,7 @@ let Gameboard = (function() {
             }
 
         }
-        if ((Game.getxAIActive() || Game.getoAIActive()) && !gameOver) {
+        if ((Game.getxAIActive() || Game.getoAIActive()) && !gameIsOver()) {
             // let currentMark = Game.getCurrentPlayer().playerMark;
             let currentName = Game.getNextPlayer().getName();
             turnDisplay.textContent = `${currentName}'s turn`
@@ -68,6 +69,9 @@ let Gameboard = (function() {
     let getPositionsFilled = () => positionsFilled;
 
     let incrementPosnFilled = () => positionsFilled++;
+
+    let getXWins = () => xWins;
+    let getOWins = () => oWins;
 
     function gameIsOver() {
         let xInARow = 0;
@@ -186,6 +190,9 @@ let Gameboard = (function() {
         selectablePosition,
         getPositionsFilled,
         incrementPosnFilled,
+        getXWins,
+        getOWins,
+        gameIsOver,
     };
     
 })();
@@ -333,30 +340,52 @@ let Game = (function() {
         let chosenPosition;
         let board = Gameboard.getCurrentBoard();
         let moveMade = false;
-        for (let i = 0 ; i < board.length ; i++) {
+        let bestScore = (xAIActive) ? -Infinity : Infinity;
+        let bestMove;
+        for (let i = 0 ; i < board.length ; i++) { // check all playable posn's
             for (let j = 0 ; j < board[i].length ; j++) {
                 if (board[i][j] === null) {
                     if (Gameboard.getPositionsFilled()%2 === 0) {
-                        board[i][j] = "X";
+                        // board[i][j] = "X";
+                        let score = minimax(board, 2, true);
+                        // board[i][j] = null;
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestMove = {i,j};
+                        }
                     } else {
-                        board[i][j] = "O";
+                        // board[i][j] = "O";
+                        let score = minimax(board, 2, false);
+                        // board[i][j] = null;
+                        if (score < bestScore) {
+                            bestScore = score;
+                            bestMove = {i,j};
+                        }
                     }
-                    if (i === 0 && j === 0) chosenPosition = "top left";
-                    else if (i === 0 && j === 1) chosenPosition = "top center";
-                    else if (i === 0 && j === 2) chosenPosition = "top right";
-                    else if (i === 1 && j === 0) chosenPosition = "mid left";
-                    else if (i === 1 && j === 1) chosenPosition = "mid center";
-                    else if (i === 1 && j === 2) chosenPosition = "mid right";
-                    else if (i === 2 && j === 0) chosenPosition = "bottom left";
-                    else if (i === 2 && j === 1) chosenPosition = "bottom center";
-                    else if (i === 2 && j === 2) chosenPosition = "bottom right";
-                    moveMade = true;
-                    break;
+                    
+                    // moveMade = true;
+                    // break;
                 }
             }
-            if (moveMade) break;
+            // if (moveMade) break;
         }
-        for (const position of allPositions) {
+
+        if (bestMove.i === 0 && bestMove.j === 0) chosenPosition = "top left";
+        else if (bestMove.i === 0 && bestMove.j === 1) chosenPosition = "top center";
+        else if (bestMove.i === 0 && bestMove.j === 2) chosenPosition = "top right";
+        else if (bestMove.i === 1 && bestMove.j === 0) chosenPosition = "mid left";
+        else if (bestMove.i === 1 && bestMove.j === 1) chosenPosition = "mid center";
+        else if (bestMove.i === 1 && bestMove.j === 2) chosenPosition = "mid right";
+        else if (bestMove.i === 2 && bestMove.j === 0) chosenPosition = "bottom left";
+        else if (bestMove.i === 2 && bestMove.j === 1) chosenPosition = "bottom center";
+        else if (bestMove.i === 2 && bestMove.j === 2) chosenPosition = "bottom right";
+
+        if (Gameboard.getPositionsFilled()%2 === 0) { // make the best move
+            board[bestMove.i][bestMove.j] = "X";
+        } else {
+            board[bestMove.i][bestMove.j] = "O";
+        }
+        for (const position of allPositions) {// remove event listener
             if (position.classList.contains(chosenPosition)) {
                 position.removeEventListener("click", Gameboard.selectablePosition);
             }
@@ -385,10 +414,46 @@ let Game = (function() {
         reset();
     }
 
-    // function minimax(board, depth, maximizingPlayer) {
-    //     if (depth === 0 || )
+    function minimax(board, depth, maximizingPlayer) {
+        if (Gameboard.gameIsOver() || depth === 0) {
+            // console.log(Gameboard.getXWins());
+            // console.log(Gameboard.getOWins());
+            if (Gameboard.getXWins()) {
+                return 1;
+            } else if (Gameboard.getOWins()) {
+                return -1;
+            }
+            return 0;
+        }
+        if (maximizingPlayer) {
+            let bestScore = -Infinity;
+            for (let i = 0 ; i < board.length ; i++) {
+                for (let j = 0 ; j < board[i].length ; j++) {
+                    if (board[i][j] === null) {
+                        board[i][j] = "X";
+                        value = minimax(board, depth-1, false);
+                        board[i][j] = null;
+                        bestScore = Math.max(value, bestScore);
+                    }
+                }
+            }
+            return bestScore;
+        } else {
+            let bestScore = Infinity;
+            for (let i = 0 ; i < board.length ; i++) {
+                for (let j = 0 ; j < board[i].length ; j++) {
+                    if (board[i][j] === null) {
+                        board[i][j] = "O";
+                        value = minimax(board, depth-1, true);
+                        board[i][j] = null;
+                        bestScore = Math.min(value, bestScore);
+                    } 
+                }
+            }
+            return bestScore;
+        }
 
-    // }
+    }
 
     function uncheckAIoptions() {
         let xAI = document.getElementById("xAI");
