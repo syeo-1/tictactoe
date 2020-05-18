@@ -1,10 +1,12 @@
-/* body {
-    width: 100%;
-} */
+@media (max-width: 600px) {
+    #current-player {
+        width: 600px;
+    }
+}
 
 #current-player {
     /* display: table; */
-    width: 600px;
+    /* width: 510px; */
     text-align: center;
     font-size: 48px;
     /* margin: 0 auto; */
