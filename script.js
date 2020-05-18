@@ -327,12 +327,6 @@ let Game = (function() {
         player1 = Player(newp1Name===""?"player X":player1Name, "X");
         player2 = Player(newp2Name===""?"player O":player2Name, "O");
         reset();
-
-        let settingsForm = document.getElementById("settings-form");
-        settingsForm.classList.add("hidden");
-        if (!document.getElementById("ai-form").classList.contains("hidden")) {
-            document.getElementById("ai-form").classList.add("hidden");
-        }
     }
 
     function showAISettings() {
@@ -413,8 +407,7 @@ let Game = (function() {
             xAIActive = false;
             oAIActive = false;
         }
-        let aiSettingsForm = document.getElementById("ai-form");
-        aiSettingsForm.classList.add("hidden");
+        saveSettings();
         hideSettingsForm();
         reset();
     }
