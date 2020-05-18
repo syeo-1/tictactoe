@@ -72,6 +72,10 @@ let Gameboard = (function() {
 
     let getXWins = () => xWins;
     let getOWins = () => oWins;
+    function resetWins() {
+        xWins = false;
+        oWins = false;
+    }
 
     function gameIsOver() {
         let xInARow = 0;
@@ -193,6 +197,7 @@ let Gameboard = (function() {
         getXWins,
         getOWins,
         gameIsOver,
+        resetWins,
     };
     
 })();
@@ -346,17 +351,17 @@ let Game = (function() {
             for (let j = 0 ; j < board[i].length ; j++) {
                 if (board[i][j] === null) {
                     if (Gameboard.getPositionsFilled()%2 === 0) {
-                        // board[i][j] = "X";
-                        let score = minimax(board, 2, true);
-                        // board[i][j] = null;
+                        board[i][j] = "X";
+                        let score = minimax(board, 1, false);
+                        board[i][j] = null;
                         if (score > bestScore) {
                             bestScore = score;
                             bestMove = {i,j};
                         }
                     } else {
-                        // board[i][j] = "O";
-                        let score = minimax(board, 2, false);
-                        // board[i][j] = null;
+                        board[i][j] = "O";
+                        let score = minimax(board, 1, true);
+                        board[i][j] = null;
                         if (score < bestScore) {
                             bestScore = score;
                             bestMove = {i,j};
@@ -419,10 +424,13 @@ let Game = (function() {
             // console.log(Gameboard.getXWins());
             // console.log(Gameboard.getOWins());
             if (Gameboard.getXWins()) {
+                Gameboard.resetWins();
                 return 1;
             } else if (Gameboard.getOWins()) {
+                Gameboard.resetWins();
                 return -1;
             }
+            Gameboard.resetWins();
             return 0;
         }
         if (maximizingPlayer) {
