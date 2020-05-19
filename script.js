@@ -5,9 +5,6 @@ let Gameboard = (function() {
     let turnDisplay = document.getElementById("current-player");
     let xWins;
     let oWins;
-    // let gameOver = false;
-    // function that rerenders the board with playerMove
-    // also adds/removes event listeners upon a move
 
     function displayCurrentPlayerName() {
         let currentName = Game.getCurrentPlayer().getName();
@@ -17,8 +14,6 @@ let Gameboard = (function() {
     function selectablePosition(e) {
         // modify gameboard array (add an x or o)
         let chosenPosition = [...e.target.classList].slice(1).join(" ");
-        // console.log([...e.target.classList].slice(1).join(" "));
-        // console.log(Game.getCurrentPlayer());
 
         let currentMark = Game.getCurrentPlayer().playerMark;
         
@@ -34,14 +29,15 @@ let Gameboard = (function() {
         else if (chosenPosition === "bottom right") _gameboard[2][2] = currentMark;
 
         Game.toggleCurrentPlayer();
-        // console.log(Game.currentPlayerIsX);
         displayCurrentPlayerName();
         DisplayController.renderBoard()
+
         // remove the appropriate event listener
         e.target.removeEventListener("click", selectablePosition);
         positionsFilled++;
         if (gameIsOver()) {
             turnDisplay.textContent = getWinnerString();
+
             // remove the remaining board event listeners
             for (const position of _allPositions) {
                 position.removeEventListener("click", selectablePosition);
@@ -49,7 +45,6 @@ let Gameboard = (function() {
 
         }
         if ((Game.getxAIActive() || Game.getoAIActive()) && !gameIsOver()) {
-            // let currentMark = Game.getCurrentPlayer().playerMark;
             let currentName = Game.getNextPlayer().getName();
             turnDisplay.textContent = `${currentName}'s turn`
             Game.getAImove();
@@ -58,6 +53,7 @@ let Gameboard = (function() {
             positionsFilled++;
             if (gameIsOver()) {
                 turnDisplay.textContent = getWinnerString();
+
                 // remove the remaining board event listeners
                 for (const position of _allPositions) {
                     position.removeEventListener("click", selectablePosition);
@@ -176,6 +172,7 @@ let Gameboard = (function() {
         ];
         positionsFilled = 0;
         gameOver = false;
+
         // add event listeners to all grid elements
         for (const position of _allPositions) {
             position.addEventListener("click", selectablePosition);
@@ -222,10 +219,9 @@ let DisplayController = (function() {
     };
 })();
 
-let Player = (name, mark, isHuman) => {
+let Player = (name, mark) => {
     let playerName = name;
     let playerMark = mark;
-    let playerIsHuman = isHuman;
 
     let getName = () => name;
 
@@ -239,8 +235,8 @@ let Player = (name, mark, isHuman) => {
 
 
 let Game = (function() {
-    let player1 = Player("player X", "X", true);
-    let player2 = Player("player O", "O", true);
+    let player1 = Player("player X", "X");
+    let player2 = Player("player O", "O");
     let player1Name;
     let player2Name;
     let currentPlayer;
@@ -249,9 +245,6 @@ let Game = (function() {
 
     function start() {
         currentPlayer = player1;
-        // console.log(currentPlayer);
-        // xAIActive = false;
-        // oAIActive = false;
 
         Gameboard.reset();
         DisplayController.renderBoard();
@@ -290,8 +283,6 @@ let Game = (function() {
         return currentPlayer;
     }
     function getNextPlayer() {
-        // console.log(player1.playerName);
-        // console.log(player2.playerName);
         return (currentPlayer === player1) ? player2 : player1;
     }
     function getPlayer1() {
@@ -340,7 +331,6 @@ let Game = (function() {
         let allPositions = document.querySelectorAll(".gameboardPosition");
         let chosenPosition;
         let board = Gameboard.getCurrentBoard();
-        let moveMade = false;
         let bestScore = (xAIActive) ? -Infinity : Infinity;
         let bestMove;
         for (let i = 0 ; i < board.length ; i++) { // check all playable posn's
@@ -367,12 +357,8 @@ let Game = (function() {
                             bestMove = {i,j};
                         }
                     }
-                    
-                    // moveMade = true;
-                    // break;
                 }
             }
-            // if (moveMade) break;
         }
 
         if (bestMove.i === 0 && bestMove.j === 0) chosenPosition = "top left";
@@ -385,12 +371,15 @@ let Game = (function() {
         else if (bestMove.i === 2 && bestMove.j === 1) chosenPosition = "bottom center";
         else if (bestMove.i === 2 && bestMove.j === 2) chosenPosition = "bottom right";
 
-        if (Gameboard.getPositionsFilled()%2 === 0) { // make the best move
+        // make the best move
+        if (Gameboard.getPositionsFilled()%2 === 0) {
             board[bestMove.i][bestMove.j] = "X";
         } else {
             board[bestMove.i][bestMove.j] = "O";
         }
-        for (const position of allPositions) {// remove event listener
+
+        // remove event listener
+        for (const position of allPositions) {
             if (position.classList.contains(chosenPosition)) {
                 position.removeEventListener("click", Gameboard.selectablePosition);
             }
@@ -404,7 +393,6 @@ let Game = (function() {
         if (document.getElementById("xAI").checked) {
             xAIActive = true;
             oAIActive = false;
-            // maybe later add ai name!
         } else if (document.getElementById("oAI").checked) {
             oAIActive = true;
             xAIActive = false;
@@ -420,8 +408,6 @@ let Game = (function() {
 
     function minimax(board, maximizingPlayer) {
         if (Gameboard.gameIsOver()) {
-            // console.log(Gameboard.getXWins());
-            // console.log(Gameboard.getOWins());
             if (Gameboard.getXWins()) {
                 Gameboard.resetWins();
                 return 1;
@@ -482,8 +468,6 @@ let Game = (function() {
     }
 
     function reset() {
-        // console.log(xAIActive);
-        
         currentPlayer = player1;
         Gameboard.reset()
         if (xAIActive) {
@@ -519,8 +503,4 @@ let Game = (function() {
     
 })();
 
-
 Game.start()
-
-
-// game object would control whose turn it is x or o
