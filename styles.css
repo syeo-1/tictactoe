@@ -75,7 +75,7 @@ main {
 
 .game-settings {
     margin-top: 30px;
-
+    margin-bottom: 15px;
     text-align: center;
 }
 .form-button {
@@ -90,11 +90,11 @@ main {
 }
 
 #settings-form {
-    margin: 0 auto;
+    margin: 15px auto;
     text-align: center;
 }
 #ai-form {
-    margin: 0 auto;
+    margin: 15px auto;
     text-align: center;
 }
 
