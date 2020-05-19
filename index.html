@@ -24,27 +24,30 @@
             <div class="gameboardPosition bottom right"></div>
         </div>
         <div class="game-settings">
-            <button id="settings">settings</button>
-            <!-- <button id="play">play</button> -->
-            <button id="reset">reset board</button>
+            <div class="set-and-reset">
+                <button class="form-button" id="settings">settings</button>
+                <!-- <button id="play">play</button> -->
+                <button class="form-button" id="reset">reset board</button>
+            </div>
+            <div class="hidden" id="settings-form" onsubmit="return false">
+                <form name="settings" action="">
+                    <input id="player-x-name" type="text" placeholder="X Name" maxlength="20">
+                    <input id="player-o-name" type="text" placeholder="O Name" maxlength="20">
+                    <button class="form-button" id="settings-cancel">Cancel</button>
+                    <button class="form-button" id="settings-set">Set</button>
+                    <button class="form-button" id="ai">vs AI</button>
+                </form>
+            </div>
+            <div class="hidden" id="ai-form" onsubmit="return false">
+                <form name="ai-settings">
+                    <label for="xAI"><input type="radio" name="ai-option" id="xAI">x AI</label>
+                    <label for="oAI"><input type="radio" name="ai-option" id="oAI">o AI</label>
+                    <button class="form-button" id="uncheck">Disable AI</button>
+                    <button class="form-button" id="ai-set">Set</button>
+                </form>
+            </div>
         </div>
-        <div class="hidden" id="settings-form" onsubmit="return false">
-            <form name="settings" action="">
-                <input id="player-x-name" type="text" placeholder="player X" maxlength="20">
-                <input id="player-o-name" type="text" placeholder="player O" maxlength="20">
-                <button id="settings-cancel">Cancel</button>
-                <button id="settings-set">Set</button>
-                <button id="ai">vs AI</button>
-            </form>
-        </div>
-        <div class="hidden" id="ai-form" onsubmit="return false">
-            <form name="ai-settings">
-                <label for="xAI"><input type="radio" name="ai-option" id="xAI">x AI</label>
-                <label for="oAI"><input type="radio" name="ai-option" id="oAI">o AI</label>
-                <button id="uncheck">Disable AI</button>
-                <button id="ai-set">Set</button>
-            </form>
-        </div>
+        
     </main>
 
     <script type="text/javascript" src="script.js"></script>

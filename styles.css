@@ -2,6 +2,10 @@
     #current-player {
         width: 600px;
     }
+    .game-settings {
+        width: 600px;
+        margin-left: 225px;
+    }
 }
 
 #current-player {
@@ -28,8 +32,8 @@ main {
         "mid-left mid-center mid-right"
         "bottom-left bottom-center bottom-right"
     ;
-    width: 600px;
-    height: 600px;
+    width: 588px;
+    height: 588px;
     margin: 0 auto;
 }
 
@@ -38,8 +42,8 @@ main {
     display: table-cell;
     vertical-align: middle;
     text-align: center;
-    height: 200px;
-    line-height: 200px;
+    height: 196px;
+    line-height: 196px;
     font-size: 140px;
     font-family: Arial, Helvetica, sans-serif;
 }
@@ -74,29 +78,39 @@ main {
 }
 
 .game-settings {
-    display: table;
-    margin: 0 auto;
+    margin-top: 30px;
+
+    text-align: center;
 }
-#setting {
-    margin-right: 230px;
-}
-#reset {
-    margin-left: 230px;
+.form-button {
+    width: 100px;
+    height: 50px;
+    font-size: 16px;
+    background-color: gray;
 }
 
-#game-over {
+#xAI {
+    font-size: large;
+}
+
+#settings-form {
+    /* width: 50%; */
+    margin: 0 auto;
+    text-align: center;
+}
+#ai-form {
+    /* width: 50%; */
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* #game-over {
     margin: 0 auto;
     width: 50%;
-}
+} */
+
+
 
 .hidden {
     display: none;
-}
-#settings-form {
-    width: 50%;
-    margin: 0 auto;
-}
-#ai-form {
-    width: 50%;
-    margin: 0 auto;
 }
