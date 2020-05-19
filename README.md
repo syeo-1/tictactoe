@@ -1,6 +1,6 @@
 [View in Browser](https://syeo-1.github.io/tictactoe/)
 
-game of tic-tac-toe that looks presentable on both desktop and mobile. implmented minimax algorithm for user to play against
+game of tic-tac-toe that looks presentable on both desktop and mobile. implemented minimax algorithm for user to play against
 
 Things I learned about:
 - using the module pattern and factory method to aid with code organization
