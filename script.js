@@ -69,6 +69,7 @@ let Gameboard = (function() {
     let getPositionsFilled = () => positionsFilled;
 
     let incrementPosnFilled = () => positionsFilled++;
+    let decrementPosnFilled = () => positionsFilled--;
 
     let getXWins = () => xWins;
     let getOWins = () => oWins;
@@ -198,6 +199,7 @@ let Gameboard = (function() {
         getOWins,
         gameIsOver,
         resetWins,
+        decrementPosnFilled,
     };
     
 })();
@@ -346,16 +348,20 @@ let Game = (function() {
                 if (board[i][j] === null) {
                     if (Gameboard.getPositionsFilled()%2 === 0) {
                         board[i][j] = "X";
-                        let score = minimax(board, 1, false);
+                        Gameboard.incrementPosnFilled();
+                        let score = minimax(board, false);
                         board[i][j] = null;
+                        Gameboard.decrementPosnFilled()
                         if (score > bestScore) {
                             bestScore = score;
                             bestMove = {i,j};
                         }
                     } else {
                         board[i][j] = "O";
-                        let score = minimax(board, 1, true);
+                        Gameboard.incrementPosnFilled();
+                        let score = minimax(board, true);
                         board[i][j] = null;
+                        Gameboard.decrementPosnFilled();
                         if (score < bestScore) {
                             bestScore = score;
                             bestMove = {i,j};
@@ -412,8 +418,8 @@ let Game = (function() {
         reset();
     }
 
-    function minimax(board, depth, maximizingPlayer) {
-        if (Gameboard.gameIsOver() || depth === 0) {
+    function minimax(board, maximizingPlayer) {
+        if (Gameboard.gameIsOver()) {
             // console.log(Gameboard.getXWins());
             // console.log(Gameboard.getOWins());
             if (Gameboard.getXWins()) {
@@ -432,8 +438,10 @@ let Game = (function() {
                 for (let j = 0 ; j < board[i].length ; j++) {
                     if (board[i][j] === null) {
                         board[i][j] = "X";
-                        value = minimax(board, depth-1, false);
+                        Gameboard.incrementPosnFilled();
+                        let value = minimax(board, false);
                         board[i][j] = null;
+                        Gameboard.decrementPosnFilled();
                         bestScore = Math.max(value, bestScore);
                     }
                 }
@@ -445,8 +453,10 @@ let Game = (function() {
                 for (let j = 0 ; j < board[i].length ; j++) {
                     if (board[i][j] === null) {
                         board[i][j] = "O";
-                        value = minimax(board, depth-1, true);
+                        Gameboard.incrementPosnFilled();
+                        let value = minimax(board, true);
                         board[i][j] = null;
+                        Gameboard.decrementPosnFilled();
                         bestScore = Math.min(value, bestScore);
                     } 
                 }
