@@ -329,6 +329,7 @@ let Game = (function() {
 
     function getAImove() {
         let allPositions = document.querySelectorAll(".gameboardPosition");
+
         let chosenPosition;
         let board = Gameboard.getCurrentBoard();
         let bestScore = (xAIActive) ? -Infinity : Infinity;
@@ -380,8 +381,9 @@ let Game = (function() {
 
         // remove event listener
         for (const position of allPositions) {
-            if (position.classList.contains(chosenPosition)) {
+            if (position.classList.value.includes(chosenPosition)) {
                 position.removeEventListener("click", Gameboard.selectablePosition);
+                console.log("words");
             }
         }
     }
