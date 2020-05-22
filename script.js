@@ -383,7 +383,6 @@ let Game = (function() {
         for (const position of allPositions) {
             if (position.classList.value.includes(chosenPosition)) {
                 position.removeEventListener("click", Gameboard.selectablePosition);
-                console.log("words");
             }
         }
     }
